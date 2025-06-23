@@ -2,97 +2,100 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## API GraphQL y WebSocket con NestJS
+Este proyecto implementa una API GraphQL para gestionar libros y un WebSocket para un chat en tiempo real, utilizando NestJS. A continuación, se detalla cómo configurarlo y por qué se usan los componentes.
+Requisitos
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Node.js (v16 o superior)
+NestJS CLI: ``` npm install -g @nestjs/cli ```
+GitHub: Clona este repositorio
 
-## Description
+## Opción 1: API GraphQL
+Funcionalidad: API para gestionar libros (id, title, author) con queries (books, book) y una mutación (createBook).
+Cómo hacer que funcione
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+## Instalar dependencias:cd graphql-books-api
+```
+npm install
+npm install @nestjs/graphql @nestjs/apollo @apollo/server graphql
 ```
 
-## Compile and run the project
 
-```bash
-# development
-$ npm run start
+Iniciar el servidor: ``` npm run start:dev ```
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
+## Probar en GraphQL Playground:
+Abre  ``` http://localhost:3000/graphql ```
+Prueba queries: 
 ```
-
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+query { books { id title author } }
+query { book(id: "1") { id title author } }
+mutation { createBook(input: { title: "1984", author: "George Orwell" }) { id title author } }
 ```
+## Componentes y por qué
 
-## Deployment
+NestJS: Framework modular y escalable con soporte para TypeScript, ideal para APIs robustas.
+``` @nestjs/graphql ``` y ```@apollo/server: Habilitan GraphQL``` con un enfoque code-first, generando esquemas automáticamente.
+GraphQL Playground: Interfaz interactiva para probar queries y mutaciones.
+Por qué: GraphQL ofrece flexibilidad para que los clientes soliciten solo los datos necesarios, y NestJS simplifica la implementación.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Opción 2: WebSocket
+Funcionalidad: Chat en tiempo real que permite enviar y recibir mensajes, mostrándolos en consola y reenviándolos a todos los clientes.
+Cómo hacer que funcione
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Instalar dependencias: ``` npm install @nestjs/websockets @nestjs/platform-socket.io ws ```
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+Iniciar el servidor: ``` npm run start:dev ```
+
+Probar con un cliente WebSocket:
+Crea un archivo ```index.html ``` en una carpeta separada (ej. ``` websocket-client```):
 ```
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat WebSocket</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat Simple</h1>
+  <input id="message" type="text" placeholder="Escribe un mensaje">
+  <button onclick="sendMessage()">Enviar</button>
+  <ul id="messages"></ul>
+  <script>
+    const socket = io('http://localhost:3000');
+    socket.on('message', (data) => {
+      const li = document.createElement('li');
+      li.textContent = `De ${data.sender}: ${data.content}`;
+      document.getElementById('messages').appendChild(li);
+    });
+    function sendMessage() {
+      const message = document.getElementById('message').value;
+      socket.emit('message', message);
+      document.getElementById('message').value = '';
+    }
+  </script>
+</body>
+</html>
+```
+Sirve index.html con: ``` npm install -g http-server ```
+``` http-server -p 8080 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Abre ``` http://localhost:8080 ``` en dos pestañas, envía mensajes y verifica que aparezcan en ambas y en la consola del servidor.
 
-## Resources
+## Componentes y por qué
 
-Check out a few resources that may come in handy when working with NestJS:
+``` @nestjs/websockets y @nestjs/platform-socket.io ```: Proveen soporte para WebSocket, con Socket.IO para gestionar conexiones y eventos en tiempo real.
+Socket.IO Client: Simplifica la conexión desde el navegador al servidor WebSocket.
+Por qué: WebSocket permite comunicación bidireccional en tiempo real, ideal para chats, y Socket.IO es fácil de usar y ampliamente soportado.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Estructura del proyecto
 
-## Support
+src/books/: Módulo para la API GraphQL (entidad Book, queries y mutaciones).
+src/chat/: Módulo para el WebSocket (gateway para el chat).
+public/: (Opcional) Carpeta para servir index.html si usas @nestjs/serve-static.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Notas
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Asegúrate de que el servidor esté en http://localhost:3000.
+Para CORS en WebSocket, el gateway permite conexiones de cualquier origen ``` (cors: { origin: '*' }) ```
+Subido a GitHub para facilitar el acceso y colaboración.
