@@ -85,8 +85,12 @@ Abre ``` http://localhost:8080 ``` en dos pestañas, envía mensajes y verifica 
 ## Componentes y por qué
 
 ``` @nestjs/websockets y @nestjs/platform-socket.io ```: Proveen soporte para WebSocket, con Socket.IO para gestionar conexiones y eventos en tiempo real.
-Socket.IO Client: Simplifica la conexión desde el navegador al servidor WebSocket.
-Por qué: WebSocket permite comunicación bidireccional en tiempo real, ideal para chats, y Socket.IO es fácil de usar y ampliamente soportado.
+```Socket.IO Client ```: Simplifica la conexión desde el navegador al servidor WebSocket.
+Por qué: WebSocket permite comunicación bidireccional en tiempo real, ideal para chats, y ```Socket.IO``` es fácil de usar y ampliamente soportado.
+```@nestjs/websockets``` y ```@nestjs/platform-socket.io```: Habilitan WebSocket en NestJS, con ```Socket.IO``` para gestionar conexiones y eventos en tiempo real de forma sencilla.
+```@nestjs/serve-static:``` Sirve ```index.html``` desde el backend, eliminando la necesidad de un servidor externo y resolviendo errores 404.
+```Socket.IO Client```: Permite al navegador conectarse al WebSocket y manejar eventos de chat.
+Por qué: WebSocket es ideal para comunicación bidireccional en tiempo real, y Socket.IO simplifica la implementación con soporte multiplataforma.
 
 ## Estructura del proyecto
 
@@ -96,6 +100,9 @@ public/: (Opcional) Carpeta para servir index.html si usas @nestjs/serve-static.
 
 ## Notas
 
-Asegúrate de que el servidor esté en http://localhost:3000.
+Asegúrate de que el servidor esté en ```http://localhost:3000```.
 Para CORS en WebSocket, el gateway permite conexiones de cualquier origen ``` (cors: { origin: '*' }) ```
 Subido a GitHub para facilitar el acceso y colaboración.
+El WebSocket usa CORS ```(cors: { origin: '*' })``` para permitir conexiones desde cualquier origen.
+Revisa ```src/chat/chat.gateway.ts``` para la lógica del WebSocket y ```src/app.module.ts``` para la configuración de ServeStaticModule.
+
