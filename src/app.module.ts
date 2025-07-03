@@ -8,9 +8,9 @@ import { ChatModule } from './chat/chat.module';
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: 'schema.gql', // Genera automáticamente el archivo de esquema
-      sortSchema: true, // Ordena el esquema para consistencia
-      playground: true, // Habilita el GraphQL Playground
+      autoSchemaFile: 'schema.gql',
+      sortSchema: true,
+      playground: true,
     }),
     BooksModule,
     ChatModule,
