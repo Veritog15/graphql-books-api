@@ -3,6 +3,10 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { BooksModule } from './books/books.module';
 import { ChatModule } from './chat/chat.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { TimeServerModule } from './time-server/time-server.module';
+import { TimeClientModule } from './time-client/time-client.module';
 
 @Module({
   imports: [
@@ -14,6 +18,11 @@ import { ChatModule } from './chat/chat.module';
     }),
     BooksModule,
     ChatModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
+    TimeServerModule,
+    TimeClientModule,
   ],
 })
 export class AppModule {}
