@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat WebSocket</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+</head>
+<body>
+  <h1>Chat Simple</h1>
+  <input id="message" type="text" placeholder="Escribe un mensaje">
+  <button onclick="sendMessage()">Enviar</button>
+  <ul id="messages"></ul>
+
+  <script>
+    const socket = io('http://localhost:3000');
+    socket.on('message', (data) => {
+      const li = document.createElement('li');
+      li.textContent = `De ${data.sender}: ${data.content}`;
+      document.getElementById('messages').appendChild(li);
+    });
+
+    function sendMessage() {
+      const message = document.getElementById('message').value;
+      socket.emit('message', message);
+      document.getElementById('message').value = '';
+    }
+  </script>
+</body>
+</html>
